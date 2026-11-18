@@ -20,6 +20,7 @@ final class StatusItemController: NSObject {
         super.init()
 
         popover.behavior = .transient
+        popover.delegate = self
         popover.contentViewController = NSHostingController(
             rootView: PopoverRootView(model: model)
         )
@@ -55,5 +56,11 @@ final class StatusItemController: NSObject {
         if let view = popover.contentViewController?.view {
             view.window?.makeFirstResponder(view)
         }
+    }
+}
+
+extension StatusItemController: NSPopoverDelegate {
+    func popoverDidClose(_ notification: Notification) {
+        model.popoverClosed()
     }
 }

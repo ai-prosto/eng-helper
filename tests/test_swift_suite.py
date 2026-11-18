@@ -58,6 +58,18 @@ REQUIRED_TESTS = [
     "testHotkeyWhitespaceSelectionBehavesAsEmpty",
     "testHotkeyWithoutAccessibilityShowsHintUntilNextCapture",
     "testHotkeyEmptyCaptureInvalidatesInFlightLookup",
+    # TASK-005 (BEH-24/25/26 group checks are manual:
+    # docs/manual/speech-checks.md)
+    "testSplitsUpToFourSentencesInOrder",
+    "testBlankTextSplitsToNothing",
+    "testCardPresentationSpeaksWordOnce",
+    "testSavedRowCardSpeaksWordOnce",
+    "testFailedLookupSpeaksNothing",
+    "testReplaySpeaksWordAgainPerPress",
+    "testReadAloudSpeaksAllSentencesAndSavesNothing",
+    "testReadAloudWithBlankTextSpeaksNothing",
+    "testStaleLookupSpeaksNothing",
+    "testPopoverCloseSilencesInFlightLookup",
 ]
 
 

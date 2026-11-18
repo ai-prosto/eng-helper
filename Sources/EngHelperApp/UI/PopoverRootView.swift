@@ -23,7 +23,9 @@ struct PopoverRootView: View {
             lookupZone
 
             Divider()
-            SentencesView(text: $model.sentencesText)
+            SentencesView(text: $model.sentencesText) {
+                model.readSentencesAloud()
+            }
             Divider()
             VocabularyListView(entries: model.entries) { entry in
                 model.show(entry)
@@ -67,7 +69,9 @@ struct PopoverRootView: View {
                 .controlSize(.small)
                 .frame(maxWidth: .infinity, alignment: .center)
         case let .card(card):
-            WordCardView(card: card)
+            WordCardView(card: card) {
+                model.replay()
+            }
         case let .error(message):
             // One short line; nothing else changes (BEH-18, design D-18).
             Text(message)

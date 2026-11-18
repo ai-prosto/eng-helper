@@ -6,12 +6,23 @@ import SwiftUI
 /// (BEH-17, design D-11).
 struct WordCardView: View {
     let card: WordCard
+    var onReplay: () -> Void = {}
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                Text(card.word)
-                    .font(.title2.bold())
+                HStack(spacing: 6) {
+                    Text(card.word)
+                        .font(.title2.bold())
+                    // ↻ speaks the word again, once per press
+                    // (BEH-25, design D-12).
+                    Button(action: onReplay) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel("Replay pronunciation")
+                    .help("Speak the word again")
+                }
                 if let ipa = card.ipa {
                     Text(ipa)
                         .foregroundStyle(.secondary)

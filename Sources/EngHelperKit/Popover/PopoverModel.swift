@@ -33,13 +33,15 @@ public final class PopoverModel: ObservableObject {
 
     private let service: VocabularyService
     private let store: VocabularyStore
+    private let speaker: Speaking?
     // Only the newest lookup may write `phase`; a tap on a saved row
     // also invalidates anything still in flight.
     private var lookupGeneration = 0
 
-    public init(lookup: WordLookup, store: VocabularyStore) {
+    public init(lookup: WordLookup, store: VocabularyStore, speaker: Speaking? = nil) {
         self.service = VocabularyService(lookup: lookup, store: store)
         self.store = store
+        self.speaker = speaker
         refreshEntries()
     }
 
@@ -61,7 +63,7 @@ public final class PopoverModel: ObservableObject {
             let card = try await service.addWord(word)
             refreshEntries()
             guard generation == lookupGeneration else { return }
-            phase = .card(card)
+            present(card)
         } catch is CancellationError {
             guard generation == lookupGeneration else { return }
             phase = .idle
@@ -104,11 +106,46 @@ public final class PopoverModel: ObservableObject {
         phase = .idle
     }
 
+    /// The popover closed: a lookup still in flight must not present
+    /// — and speak (BEH-24) — into a hidden app. A pending spinner
+    /// resets so the next open starts clean; the word stays saved
+    /// either way.
+    public func popoverClosed() {
+        lookupGeneration += 1
+        if phase == .loading {
+            phase = .idle
+        }
+    }
+
     /// A tap on a saved row: reopen the stored card — no lookup, no
     /// save, no network (BEH-19).
     public func show(_ entry: VocabularyEntry) {
         lookupGeneration += 1
-        phase = .card(entry.card)
+        present(entry.card)
+    }
+
+    /// The single transition that presents a card. It speaks the word
+    /// exactly once per presentation (BEH-24, design D-12) — view
+    /// re-renders never pass through here, so they cannot repeat it.
+    private func present(_ card: WordCard) {
+        phase = .card(card)
+        speaker?.speak(card.word)
+    }
+
+    /// The card's ↻ button: speak the shown word again, once per
+    /// press (BEH-25, design D-12).
+    public func replay() {
+        guard case let .card(card) = phase else { return }
+        speaker?.speak(card.word)
+    }
+
+    /// "Read aloud" in the sentences zone: split the pasted text and
+    /// speak it sentence after sentence to the end (BEH-26, design
+    /// D-13). This path never reaches the store.
+    public func readSentencesAloud() {
+        let sentences = SentenceSplitter.split(sentencesText)
+        guard !sentences.isEmpty else { return }
+        speaker?.speakSequence(sentences)
     }
 
     /// Reloads the saved list from disk, newest first.

@@ -202,8 +202,8 @@ final class GatedTransport: DictionaryTransport, @unchecked Sendable {
     }
 
     // Design D-08: a capture without the Accessibility grant shows
-    // the hint and runs no lookup; the next successful capture
-    // clears it.
+    // the hint and runs no lookup; the next successful capture —
+    // with or without a selection — clears it.
     @Test func testHotkeyWithoutAccessibilityShowsHintUntilNextCapture() async throws {
         let (model, transport) = makeModel(.respond(try fixture("grouped"), statusCode: 200))
 
@@ -213,6 +213,11 @@ final class GatedTransport: DictionaryTransport, @unchecked Sendable {
         #expect(model.phase == .idle)
         #expect(transport.fetchedWords.isEmpty)
 
+        await model.handleHotkey(.empty)
+
+        #expect(model.showAccessibilityHint == false)
+
+        await model.handleHotkey(.accessibilityMissing)
         await model.handleHotkey(.selection("bank"))
 
         #expect(model.showAccessibilityHint == false)

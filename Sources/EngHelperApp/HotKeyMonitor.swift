@@ -1,4 +1,5 @@
 import Carbon.HIToolbox
+import os
 
 /// System-wide Option+Shift+D through Carbon's `RegisterEventHotKey`
 /// (design D-06): it fires no matter which app is frontmost (BEH-21)
@@ -18,7 +19,7 @@ final class HotKeyMonitor {
         )
         // A C callback cannot capture; `self` travels as userData and
         // the dispatcher target delivers on the main thread.
-        InstallEventHandler(
+        let installStatus = InstallEventHandler(
             GetEventDispatcherTarget(),
             { _, _, userData in
                 guard let userData else { return noErr }
@@ -37,7 +38,7 @@ final class HotKeyMonitor {
         )
 
         let hotKeyID = EventHotKeyID(signature: Self.signature, id: 1)
-        RegisterEventHotKey(
+        let registerStatus = RegisterEventHotKey(
             UInt32(kVK_ANSI_D),
             UInt32(optionKey | shiftKey),
             hotKeyID,
@@ -45,6 +46,13 @@ final class HotKeyMonitor {
             0,
             &hotKeyRef
         )
+        // A conflict (another app owns Option+Shift+D) would otherwise
+        // leave the hotkey silently dead.
+        if installStatus != noErr || registerStatus != noErr {
+            Logger(subsystem: "EngHelper", category: "hotkey").error(
+                "Hotkey registration failed: install=\(installStatus), register=\(registerStatus)"
+            )
+        }
     }
 
     deinit {

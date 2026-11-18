@@ -39,7 +39,7 @@ Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decompositio
 
 
 ### TASK-003: Menu bar shell with the popover, card, error and list zones
-P2 | 🔍 REVIEW   Est: 0.5d
+P2 | ✅ DONE   Est: 0.5d
 
 Implement scenarios BEH-14, BEH-15, BEH-16, BEH-17, BEH-18, BEH-19 (DT-03, group solo).
 Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decomposition.md#DT-03

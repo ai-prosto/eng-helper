@@ -19,22 +19,22 @@ Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decompositio
 
 
 ### TASK-002: Vocabulary storage, duplicate rules and list ordering
-P2 | TODO   Est: 0.5d
+P2 | ✅ DONE   Est: 0.5d
 
 Implement scenarios BEH-06, BEH-07, BEH-08, BEH-09, BEH-10, BEH-11, BEH-12, BEH-13 (DT-02, group solo).
 Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decomposition.md#DT-02
 **Depends on:** [TASK-001]
 
 **Checklist:**
-- [ ] implement BEH-06: Saving a card writes vocabulary.json and creates the folder when missing
-- [ ] implement BEH-07: The saved entry holds the whole card
-- [ ] implement BEH-08: The file on disk is valid, readable JSON
-- [ ] implement BEH-09: A failed lookup leaves the file untouched
-- [ ] implement BEH-10: A word already saved stays one entry, matched ignoring case, with its first date
-- [ ] implement BEH-11: Word forms are separate entries
-- [ ] implement BEH-12: Entries come back newest first with their glosses
-- [ ] implement BEH-13: A stored entry rebuilds its full card without any transport call
-- [ ] group check: Tests/EngHelperKitTests/VocabularyStoreTests.swift::testCreatesFolderAndWritesVocabularyFile (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testEntryStoresWordGlossDateIPAAndMeanings (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testFileIsValidPrettyPrintedJSONArray (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testFailedLookupWritesNothing (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testCaseInsensitiveDuplicateKeepsOneEntryAndFirstDate (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testWordFormsAreSeparateEntries (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testEntriesNewestFirst (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testEntryRebuildsCardWithoutNetwork (kind: pytest) green on BEH-06, BEH-07, BEH-08, BEH-09, BEH-10, BEH-11, BEH-12, BEH-13
+- [x] implement BEH-06: Saving a card writes vocabulary.json and creates the folder when missing
+- [x] implement BEH-07: The saved entry holds the whole card
+- [x] implement BEH-08: The file on disk is valid, readable JSON
+- [x] implement BEH-09: A failed lookup leaves the file untouched
+- [x] implement BEH-10: A word already saved stays one entry, matched ignoring case, with its first date
+- [x] implement BEH-11: Word forms are separate entries
+- [x] implement BEH-12: Entries come back newest first with their glosses
+- [x] implement BEH-13: A stored entry rebuilds its full card without any transport call
+- [x] group check: Tests/EngHelperKitTests/VocabularyStoreTests.swift::testCreatesFolderAndWritesVocabularyFile (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testEntryStoresWordGlossDateIPAAndMeanings (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testFileIsValidPrettyPrintedJSONArray (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testFailedLookupWritesNothing (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testCaseInsensitiveDuplicateKeepsOneEntryAndFirstDate (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testWordFormsAreSeparateEntries (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testEntriesNewestFirst (kind: pytest), Tests/EngHelperKitTests/VocabularyStoreTests.swift::testEntryRebuildsCardWithoutNetwork (kind: pytest) green on BEH-06, BEH-07, BEH-08, BEH-09, BEH-10, BEH-11, BEH-12, BEH-13
 
 
 

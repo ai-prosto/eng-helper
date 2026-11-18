@@ -25,13 +25,23 @@ CLT_TESTING_MACROS = Path(
     "/testing/libTestingMacros.dylib"
 )
 
-# TASK-001 group check: these Swift tests must be green.
+# TASK-001 and TASK-002 group checks: these Swift tests must be green.
 REQUIRED_TESTS = [
+    # TASK-001
     "testBuildsCardWithIPAGlossAndGroupedMeanings",
     "testExamplePresentOnlyWhenPayloadHasOne",
     "testRequestsFreeDictionaryURLWithoutKey",
     "testMapsTransportFailuresToLookupErrors",
     "testEmptyGlossPayloadIsNotFound",
+    # TASK-002
+    "testCreatesFolderAndWritesVocabularyFile",
+    "testEntryStoresWordGlossDateIPAAndMeanings",
+    "testFileIsValidPrettyPrintedJSONArray",
+    "testFailedLookupWritesNothing",
+    "testCaseInsensitiveDuplicateKeepsOneEntryAndFirstDate",
+    "testWordFormsAreSeparateEntries",
+    "testEntriesNewestFirst",
+    "testEntryRebuildsCardWithoutNetwork",
 ]
 
 

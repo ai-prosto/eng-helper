@@ -39,20 +39,20 @@ Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decompositio
 
 
 ### TASK-003: Menu bar shell with the popover, card, error and list zones
-P2 | TODO   Est: 0.5d
+P2 | ✅ DONE   Est: 0.5d
 
 Implement scenarios BEH-14, BEH-15, BEH-16, BEH-17, BEH-18, BEH-19 (DT-03, group solo).
 Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decomposition.md#DT-03
 **Depends on:** [TASK-001], [TASK-002]
 
 **Checklist:**
-- [ ] implement BEH-14: The app lives in the menu bar only
-- [ ] implement BEH-15: Clicking the icon opens a popover ready for typing
-- [ ] implement BEH-16: Typing a word and pressing Enter looks it up and saves it
-- [ ] implement BEH-17: The card reads word, IPA, gloss, then meanings per part of speech
-- [ ] implement BEH-18: Failures show one short line and change nothing
-- [ ] implement BEH-19: The saved list shows words newest first and reopens cards offline
-- [ ] group check: docs/manual/popover-checks.md (kind: manual) green on BEH-14, BEH-15, BEH-16, BEH-17, BEH-18, BEH-19
+- [x] implement BEH-14: The app lives in the menu bar only
+- [x] implement BEH-15: Clicking the icon opens a popover ready for typing
+- [x] implement BEH-16: Typing a word and pressing Enter looks it up and saves it
+- [x] implement BEH-17: The card reads word, IPA, gloss, then meanings per part of speech
+- [x] implement BEH-18: Failures show one short line and change nothing
+- [x] implement BEH-19: The saved list shows words newest first and reopens cards offline
+- [x] group check: docs/manual/popover-checks.md (kind: manual) green on BEH-14, BEH-15, BEH-16, BEH-17, BEH-18, BEH-19
 
 
 

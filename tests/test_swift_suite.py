@@ -25,7 +25,8 @@ CLT_TESTING_MACROS = Path(
     "/testing/libTestingMacros.dylib"
 )
 
-# TASK-001 and TASK-002 group checks: these Swift tests must be green.
+# TASK-001 and TASK-002 group checks plus TASK-003 unit tests: these
+# Swift tests must be green.
 REQUIRED_TESTS = [
     # TASK-001
     "testBuildsCardWithIPAGlossAndGroupedMeanings",
@@ -42,6 +43,15 @@ REQUIRED_TESTS = [
     "testWordFormsAreSeparateEntries",
     "testEntriesNewestFirst",
     "testEntryRebuildsCardWithoutNetwork",
+    # TASK-003 (the group check itself is manual: docs/manual/popover-checks.md)
+    "testSubmitLooksUpShowsCardAndSaves",
+    "testBlankInputDoesNothing",
+    "testOfflineFailureShowsOneLineAndWritesNothing",
+    "testNotFoundFailureShowsOneLineAndWritesNothing",
+    "testListIsNewestFirstAndReopensCardWithoutTransport",
+    "testStaleLookupDoesNotOverwriteShownSavedCard",
+    "testBadResponseAndUnknownFailureMessages",
+    "testStoragePathsResolveApplicationSupportEngHelper",
 ]
 
 

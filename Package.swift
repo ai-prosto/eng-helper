@@ -5,10 +5,12 @@ let package = Package(
     name: "EngHelper",
     platforms: [.macOS(.v14)],
     products: [
-        .library(name: "EngHelperKit", targets: ["EngHelperKit"])
+        .library(name: "EngHelperKit", targets: ["EngHelperKit"]),
+        .executable(name: "EngHelperApp", targets: ["EngHelperApp"]),
     ],
     targets: [
         .target(name: "EngHelperKit"),
+        .executableTarget(name: "EngHelperApp", dependencies: ["EngHelperKit"]),
         .testTarget(
             name: "EngHelperKitTests",
             dependencies: ["EngHelperKit"],

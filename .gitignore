@@ -1,5 +1,6 @@
 .build/
 .swiftpm/
+build/
 .pytest_cache/
 .ruff_cache/
 .venv/

@@ -52,6 +52,12 @@ REQUIRED_TESTS = [
     "testStaleLookupDoesNotOverwriteShownSavedCard",
     "testBadResponseAndUnknownFailureMessages",
     "testStoragePathsResolveApplicationSupportEngHelper",
+    # TASK-004 (the group check itself is manual: docs/manual/hotkey-checks.md)
+    "testHotkeySelectionLooksUpTrimmedWordAndSaves",
+    "testHotkeyEmptyCaptureClearsFieldAndStartsNoLookup",
+    "testHotkeyWhitespaceSelectionBehavesAsEmpty",
+    "testHotkeyWithoutAccessibilityShowsHintUntilNextCapture",
+    "testHotkeyEmptyCaptureInvalidatesInFlightLookup",
 ]
 
 

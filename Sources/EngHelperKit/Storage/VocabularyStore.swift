@@ -20,7 +20,16 @@ public struct VocabularyStore: Sendable {
             return []
         }
         let data = try Data(contentsOf: fileURL)
-        return try Self.decoder.decode([VocabularyEntry].self, from: data)
+        let stored = try Self.decoder.decode([VocabularyEntry].self, from: data)
+        // The file keeps insertion order, but `save(_:at:)` accepts any
+        // date, so order by date here; file position breaks ties.
+        return stored.enumerated()
+            .sorted { lhs, rhs in
+                lhs.element.addedAt == rhs.element.addedAt
+                    ? lhs.offset < rhs.offset
+                    : lhs.element.addedAt > rhs.element.addedAt
+            }
+            .map(\.element)
     }
 
     /// Saves the card unless the word is already present (compared

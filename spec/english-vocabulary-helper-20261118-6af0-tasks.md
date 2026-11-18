@@ -19,7 +19,7 @@ Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decompositio
 
 
 ### TASK-002: Vocabulary storage, duplicate rules and list ordering
-P2 | 🔄 IN_PROGRESS   Est: 0.5d
+P2 | ✅ DONE   Est: 0.5d
 
 Implement scenarios BEH-06, BEH-07, BEH-08, BEH-09, BEH-10, BEH-11, BEH-12, BEH-13 (DT-02, group solo).
 Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decomposition.md#DT-02

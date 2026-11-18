@@ -2,7 +2,9 @@ import Foundation
 import Testing
 @testable import EngHelperKit
 
-@Suite struct VocabularyStoreTests {
+@Suite final class VocabularyStoreTests {
+
+    private let root: URL
 
     /// A folder (with a missing parent) that does not exist until the
     /// store's first save creates it.
@@ -10,10 +12,14 @@ import Testing
     private let store: VocabularyStore
 
     init() {
-        folder = FileManager.default.temporaryDirectory
+        root = FileManager.default.temporaryDirectory
             .appendingPathComponent("VocabularyStoreTests-\(UUID().uuidString)")
-            .appendingPathComponent("EngHelper")
+        folder = root.appendingPathComponent("EngHelper")
         store = VocabularyStore(folderURL: folder)
+    }
+
+    deinit {
+        try? FileManager.default.removeItem(at: root)
     }
 
     private func makeCard(
@@ -103,12 +109,14 @@ import Testing
 
         try store.save(makeCard("Bank"), at: first)
         try store.save(makeCard("bank"), at: later)
-        try store.save(makeCard("BANK"), at: later)
+        let returned = try store.save(makeCard("BANK"), at: later)
 
         let entries = try store.entries()
         #expect(entries.count == 1)
         #expect(entries.first?.word == "Bank")
         #expect(entries.first?.addedAt == first)
+        #expect(returned.word == "Bank", "a duplicate save returns the original entry")
+        #expect(returned.addedAt == first)
     }
 
     // BEH-11: inflected forms are different words, not duplicates.
@@ -140,6 +148,40 @@ import Testing
         let entries = try store.entries()
         #expect(entries.map(\.word) == ["third", "second", "first"])
         #expect(entries.map(\.gloss) == ["Gloss three.", "Gloss two.", "Gloss one."])
+    }
+
+    // BEH-12: "newest first" means the save date, even when a caller
+    // supplies dates out of order.
+    @Test func testEntriesSortByDateNotInsertionOrder() throws {
+        try store.save(makeCard("newer"), at: Date(timeIntervalSince1970: 1_700_200_000))
+        try store.save(makeCard("older"), at: Date(timeIntervalSince1970: 1_700_000_000))
+
+        #expect(try store.entries().map(\.word) == ["newer", "older"])
+    }
+
+    // The file stores whole-second dates; the returned entry already
+    // carries the truncated date, so it equals its reloaded copy.
+    @Test func testSubSecondDateSurvivesDiskRoundTrip() throws {
+        let saved = try store.save(
+            makeCard("bank"),
+            at: Date(timeIntervalSince1970: 1_700_000_000.75)
+        )
+
+        let reloaded = try #require(try store.entries().first)
+        #expect(reloaded == saved)
+        #expect(saved.addedAt == Date(timeIntervalSince1970: 1_700_000_000))
+    }
+
+    // A corrupt vocabulary.json fails loudly on read and on save, and
+    // a failed save never clobbers the bytes on disk.
+    @Test func testCorruptFileThrowsAndIsNeverClobbered() throws {
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let garbage = Data("not json".utf8)
+        try garbage.write(to: store.fileURL)
+
+        #expect(throws: (any Error).self) { try self.store.entries() }
+        #expect(throws: (any Error).self) { try self.store.save(self.makeCard("bank")) }
+        #expect(try Data(contentsOf: store.fileURL) == garbage)
     }
 
     // BEH-13: a looked-up card saved once comes back identical from a

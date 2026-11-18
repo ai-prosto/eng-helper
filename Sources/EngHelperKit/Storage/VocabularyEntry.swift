@@ -14,7 +14,11 @@ public struct VocabularyEntry: Equatable, Codable, Sendable {
         self.ipa = card.ipa
         self.gloss = card.gloss
         self.meanings = card.meanings
-        self.addedAt = addedAt
+        // The file stores whole-second ISO-8601 dates, so truncate up
+        // front: the entry stays `==` to its reloaded copy.
+        self.addedAt = Date(
+            timeIntervalSince1970: addedAt.timeIntervalSince1970.rounded(.down)
+        )
     }
 
     /// The stored card, reassembled without any lookup.

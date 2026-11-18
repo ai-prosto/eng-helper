@@ -11,7 +11,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             let folder = try StoragePaths.vocabularyFolder()
             let store = VocabularyStore(folderURL: folder)
-            let model = PopoverModel(lookup: WordLookup(), store: store)
+            let model = PopoverModel(
+                lookup: WordLookup(),
+                store: store,
+                speaker: SystemSpeaker()
+            )
             self.model = model
             statusItemController = StatusItemController(model: model)
             hotKeyMonitor = HotKeyMonitor { [weak self] in

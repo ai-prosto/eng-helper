@@ -72,18 +72,18 @@ Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decompositio
 
 
 ### TASK-005: Speech: automatic word pronunciation, replay and the sentences zone
-P2 | TODO   Est: 0.5d
+P2 | ✅ DONE   Est: 0.5d
 
 Implement scenarios BEH-23, BEH-24, BEH-25, BEH-26 (DT-05, group solo).
 Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decomposition.md#DT-05
 **Depends on:** [TASK-003]
 
 **Checklist:**
-- [ ] implement BEH-23: Pasted text splits into its sentences, in order, in full
-- [ ] implement BEH-24: The word is spoken once when the card appears
-- [ ] implement BEH-25: The replay button speaks the word again
-- [ ] implement BEH-26: The sentences field reads pasted text aloud and saves nothing
-- [ ] group check: Tests/EngHelperKitTests/SentenceSplitterTests.swift::testSplitsUpToFourSentencesInOrder (kind: pytest), docs/manual/speech-checks.md (kind: manual) green on BEH-23, BEH-24, BEH-25, BEH-26
+- [x] implement BEH-23: Pasted text splits into its sentences, in order, in full
+- [x] implement BEH-24: The word is spoken once when the card appears
+- [x] implement BEH-25: The replay button speaks the word again
+- [x] implement BEH-26: The sentences field reads pasted text aloud and saves nothing
+- [x] group check: Tests/EngHelperKitTests/SentenceSplitterTests.swift::testSplitsUpToFourSentencesInOrder (kind: pytest), docs/manual/speech-checks.md (kind: manual) green on BEH-23, BEH-24, BEH-25, BEH-26
 
 
 

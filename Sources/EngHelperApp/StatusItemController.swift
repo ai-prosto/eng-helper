@@ -3,8 +3,8 @@ import EngHelperKit
 import SwiftUI
 
 /// Owns the status item and its popover (design D-03). The button
-/// toggles the popover; `show(prefill:)` also serves the hotkey path
-/// arriving with TASK-004.
+/// toggles the popover; the hotkey path calls `show()` and then
+/// hands its capture to `PopoverModel.handleHotkey`.
 @MainActor
 final class StatusItemController: NSObject {
     private let statusItem: NSStatusItem

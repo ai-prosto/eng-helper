@@ -159,6 +159,88 @@ final class GatedTransport: DictionaryTransport, @unchecked Sendable {
         #expect(model.entries.map(\.word) == ["bank", "apple"])
     }
 
+    // BEH-20: a hotkey capture looks the (trimmed) selection up,
+    // shows its card and saves it — same path as a typed Enter.
+    @Test func testHotkeySelectionLooksUpTrimmedWordAndSaves() async throws {
+        let (model, transport) = makeModel(.respond(try fixture("grouped"), statusCode: 200))
+
+        await model.handleHotkey(.selection("  bank \n"))
+
+        #expect(model.input == "bank")
+        #expect(transport.fetchedWords == ["bank"])
+        guard case .card = model.phase else {
+            Issue.record("expected .card, got \(model.phase)")
+            return
+        }
+        #expect(try store.entries().map(\.word) == ["bank"])
+        #expect(model.showAccessibilityHint == false)
+    }
+
+    // BEH-22: a hotkey with nothing selected presents an empty field
+    // and starts no lookup.
+    @Test func testHotkeyEmptyCaptureClearsFieldAndStartsNoLookup() async {
+        let (model, transport) = makeModel(.fail(URLError(.badURL)))
+        model.input = "leftover"
+
+        await model.handleHotkey(.empty)
+
+        #expect(model.input == "")
+        #expect(model.phase == .idle)
+        #expect(transport.fetchedWords.isEmpty)
+    }
+
+    // BEH-22: a whitespace-only selection is no selection.
+    @Test func testHotkeyWhitespaceSelectionBehavesAsEmpty() async {
+        let (model, transport) = makeModel(.fail(URLError(.badURL)))
+        model.input = "leftover"
+
+        await model.handleHotkey(.selection("  \n\t"))
+
+        #expect(model.input == "")
+        #expect(model.phase == .idle)
+        #expect(transport.fetchedWords.isEmpty)
+    }
+
+    // Design D-08: a capture without the Accessibility grant shows
+    // the hint and runs no lookup; the next successful capture —
+    // with or without a selection — clears it.
+    @Test func testHotkeyWithoutAccessibilityShowsHintUntilNextCapture() async throws {
+        let (model, transport) = makeModel(.respond(try fixture("grouped"), statusCode: 200))
+
+        await model.handleHotkey(.accessibilityMissing)
+
+        #expect(model.showAccessibilityHint == true)
+        #expect(model.phase == .idle)
+        #expect(transport.fetchedWords.isEmpty)
+
+        await model.handleHotkey(.empty)
+
+        #expect(model.showAccessibilityHint == false)
+
+        await model.handleHotkey(.accessibilityMissing)
+        await model.handleHotkey(.selection("bank"))
+
+        #expect(model.showAccessibilityHint == false)
+    }
+
+    // BEH-22: an empty hotkey capture invalidates a lookup still in
+    // flight — the stale card may not repaint over the fresh field.
+    @Test func testHotkeyEmptyCaptureInvalidatesInFlightLookup() async throws {
+        let transport = GatedTransport(respond: try fixture("grouped"))
+        let model = PopoverModel(lookup: WordLookup(transport: transport), store: store)
+
+        let lookup = Task { await model.lookUp("bank") }
+        await transport.started()
+        #expect(model.phase == .loading)
+
+        await model.handleHotkey(.empty)
+        transport.release()
+        await lookup.value
+
+        #expect(model.phase == .idle)
+        #expect(model.input == "")
+    }
+
     // Design D-18: the remaining failure lines — bad payload and the
     // catch-all — are one short line each.
     @Test func testBadResponseAndUnknownFailureMessages() {

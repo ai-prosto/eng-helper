@@ -57,17 +57,17 @@ Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decompositio
 
 
 ### TASK-004: Global hotkey, selection capture and the Accessibility grant
-P2 | TODO   Est: 0.5d
+P2 | ✅ DONE   Est: 0.5d
 
 Implement scenarios BEH-20, BEH-21, BEH-22 (DT-04, group solo).
 Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decomposition.md#DT-04
 **Depends on:** [TASK-003]
 
 **Checklist:**
-- [ ] implement BEH-20: Option+Shift+D looks up the selected word
-- [ ] implement BEH-21: The hotkey works while the app is in the background
-- [ ] implement BEH-22: The hotkey with no selection opens an empty field
-- [ ] group check: docs/manual/hotkey-checks.md (kind: manual) green on BEH-20, BEH-21, BEH-22
+- [x] implement BEH-20: Option+Shift+D looks up the selected word
+- [x] implement BEH-21: The hotkey works while the app is in the background
+- [x] implement BEH-22: The hotkey with no selection opens an empty field
+- [x] group check: docs/manual/hotkey-checks.md (kind: manual) green on BEH-20, BEH-21, BEH-22
 
 
 

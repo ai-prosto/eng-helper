@@ -32,6 +32,10 @@ any check below.
 2. **Expect:** the same word is spoken again, once.
 3. Press ↻ twice more, letting each finish.
 4. **Expect:** one pronunciation per press — two more, no extras.
+5. Look up a longer word (e.g. `incomprehensibility`) and press ↻
+   again while the voice is still mid-word.
+6. **Expect:** the pronunciation restarts from the beginning — no
+   overlap, and no second playback queued after the first.
 
 - [ ] PASS
 

@@ -72,7 +72,7 @@ Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decompositio
 
 
 ### TASK-005: Speech: automatic word pronunciation, replay and the sentences zone
-P2 | ✅ DONE   Est: 0.5d
+P2 | 🔍 REVIEW   Est: 0.5d
 
 Implement scenarios BEH-23, BEH-24, BEH-25, BEH-26 (DT-05, group solo).
 Source: workstreams/english-vocabulary-helper-20261118-6af0/spec/30-decomposition.md#DT-05

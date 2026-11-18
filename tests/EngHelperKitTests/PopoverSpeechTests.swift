@@ -125,6 +125,49 @@ final class SpySpeaker: Speaking {
         #expect(FileManager.default.fileExists(atPath: store.fileURL.path) == false)
     }
 
+    // BEH-24: a lookup superseded by a tap on a saved row must not
+    // speak when it finally completes — only the shown card's word
+    // is pronounced.
+    @Test func testStaleLookupSpeaksNothing() async throws {
+        try store.save(WordCard(word: "apple", ipa: nil, gloss: "A fruit.", meanings: []))
+        let transport = GatedTransport(respond: try fixture("grouped"))
+        let model = PopoverModel(
+            lookup: WordLookup(transport: transport),
+            store: store,
+            speaker: speaker
+        )
+
+        let lookup = Task { await model.lookUp("bank") }
+        await transport.started()
+
+        model.show(try #require(model.entries.first))
+        transport.release()
+        await lookup.value
+
+        #expect(speaker.calls == [.speak("apple")])
+    }
+
+    // BEH-24: a lookup that completes after the popover closed must
+    // not speak out of a hidden app; the pending spinner resets.
+    @Test func testPopoverCloseSilencesInFlightLookup() async throws {
+        let transport = GatedTransport(respond: try fixture("grouped"))
+        let model = PopoverModel(
+            lookup: WordLookup(transport: transport),
+            store: store,
+            speaker: speaker
+        )
+
+        let lookup = Task { await model.lookUp("bank") }
+        await transport.started()
+
+        model.popoverClosed()
+        transport.release()
+        await lookup.value
+
+        #expect(speaker.calls.isEmpty)
+        #expect(model.phase == .idle)
+    }
+
     // BEH-26: blank sentences text enqueues nothing.
     @Test func testReadAloudWithBlankTextSpeaksNothing() {
         let model = makeModel(.fail(URLError(.badURL)))

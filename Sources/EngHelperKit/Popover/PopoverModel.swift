@@ -106,6 +106,17 @@ public final class PopoverModel: ObservableObject {
         phase = .idle
     }
 
+    /// The popover closed: a lookup still in flight must not present
+    /// — and speak (BEH-24) — into a hidden app. A pending spinner
+    /// resets so the next open starts clean; the word stays saved
+    /// either way.
+    public func popoverClosed() {
+        lookupGeneration += 1
+        if phase == .loading {
+            phase = .idle
+        }
+    }
+
     /// A tap on a saved row: reopen the stored card — no lookup, no
     /// save, no network (BEH-19).
     public func show(_ entry: VocabularyEntry) {

@@ -68,6 +68,8 @@ REQUIRED_TESTS = [
     "testReplaySpeaksWordAgainPerPress",
     "testReadAloudSpeaksAllSentencesAndSavesNothing",
     "testReadAloudWithBlankTextSpeaksNothing",
+    "testStaleLookupSpeaksNothing",
+    "testPopoverCloseSilencesInFlightLookup",
 ]
 
 

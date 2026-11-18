@@ -1,0 +1,46 @@
+[
+  {
+    "word": "bank",
+    "phonetic": "",
+    "phonetics": [
+      { "audio": "https://api.dictionaryapi.dev/media/pronunciations/en/bank-us.mp3" },
+      { "text": "/bæŋk/", "audio": "" }
+    ],
+    "meanings": [
+      {
+        "partOfSpeech": "noun",
+        "definitions": [
+          {
+            "definition": "The land alongside a river or lake.",
+            "example": "We walked along the river bank."
+          },
+          {
+            "definition": "An institution where money is kept and lent."
+          }
+        ]
+      },
+      {
+        "partOfSpeech": "verb",
+        "definitions": [
+          {
+            "definition": "To tilt an aircraft sideways in flight."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "word": "bank",
+    "phonetic": "/bæŋk/",
+    "meanings": [
+      {
+        "partOfSpeech": "noun",
+        "definitions": [
+          {
+            "definition": "A row of similar things arranged together."
+          }
+        ]
+      }
+    ]
+  }
+]

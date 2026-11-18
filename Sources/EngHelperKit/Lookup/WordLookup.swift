@@ -21,6 +21,11 @@ public struct WordLookup: Sendable {
             response = try await transport.fetch(word: word)
         } catch let error as URLError where Self.offlineCodes.contains(error.code) {
             throw LookupError.offline
+        } catch let error as URLError where error.code == .cancelled {
+            // A cancelled lookup is flow control, not a failure to show.
+            throw CancellationError()
+        } catch is CancellationError {
+            throw CancellationError()
         } catch let error as LookupError {
             throw error
         } catch {

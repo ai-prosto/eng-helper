@@ -63,10 +63,18 @@ def passed_tests(swift_run: subprocess.CompletedProcess[str]) -> set[str]:
     return set(re.findall(r"Test (\w+)\(\) passed", output))
 
 
-def test_swift_suite_is_green(swift_run: subprocess.CompletedProcess[str]) -> None:
+def test_swift_suite_is_green(
+    swift_run: subprocess.CompletedProcess[str],
+    passed_tests: set[str],
+) -> None:
     assert swift_run.returncode == 0, (
         f"`{' '.join(swift_test_command())}` failed "
         f"(exit {swift_run.returncode}):\n"
+        f"{swift_run.stdout[-4000:]}\n{swift_run.stderr[-4000:]}"
+    )
+    assert passed_tests, (
+        "swift test exited 0 but no 'Test <name>() passed' lines were found; "
+        "the output format this bridge parses has changed:\n"
         f"{swift_run.stdout[-4000:]}\n{swift_run.stderr[-4000:]}"
     )
 

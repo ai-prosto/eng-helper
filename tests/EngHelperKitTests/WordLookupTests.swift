@@ -45,12 +45,47 @@ final class FakeTransport: DictionaryTransport, @unchecked Sendable {
         #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
     }
 
+    // BEH-03: characters that would alter the request path — `/` as a
+    // segment separator, `:` as a scheme marker in a relative reference,
+    // `.`/`..` as dot segments — stay inside the word segment.
+    @Test func testEncodesPathDelimitersIntoTheWordSegment() throws {
+        let client = FreeDictionaryClient()
+        let base = "https://api.dictionaryapi.dev/api/v2/entries/en/"
+
+        #expect(client.request(for: "a/b").url?.absoluteString == base + "a%2Fb")
+        #expect(client.request(for: "cat:dog").url?.absoluteString == base + "cat%3Adog")
+        #expect(client.request(for: "..").url?.absoluteString == base + "%2E%2E")
+    }
+
+    // A good payload comes back as a card: the input word is trimmed
+    // before it reaches the transport and the payload is parsed.
+    @Test func testSuccessfulLookupReturnsParsedCard() async throws {
+        let transport = FakeTransport(.respond(try fixture("grouped"), statusCode: 200))
+        let lookup = WordLookup(transport: transport)
+
+        let card = try await lookup.card(for: "  bank \n")
+
+        #expect(transport.fetchedWords == ["bank"])
+        #expect(card.word == "bank")
+        #expect(card.gloss == "The land alongside a river or lake.")
+        #expect(card.meanings.map(\.partOfSpeech) == ["noun", "verb"])
+    }
+
     // BEH-04: no-connection → offline, HTTP 404 → not found,
     // unparseable payload → not found, other HTTP failure → bad response.
     @Test func testMapsTransportFailuresToLookupErrors() async throws {
         await expectLookup(
             .fail(URLError(.notConnectedToInternet)),
             throwsError: .offline
+        )
+        await expectLookup(
+            .fail(URLError(.dnsLookupFailed)),
+            throwsError: .offline
+        )
+        // D-18: only no-connection codes are offline; a timeout is not.
+        await expectLookup(
+            .fail(URLError(.timedOut)),
+            throwsError: .badResponse
         )
         await expectLookup(
             .respond(Data(#"{"title":"No Definitions Found"}"#.utf8), statusCode: 404),
@@ -64,6 +99,15 @@ final class FakeTransport: DictionaryTransport, @unchecked Sendable {
             .respond(Data(), statusCode: 500),
             throwsError: .badResponse
         )
+    }
+
+    // A cancelled fetch propagates cancellation instead of masking it
+    // as a user-facing bad-response error.
+    @Test func testCancellationIsNotMaskedAsLookupError() async {
+        let lookup = WordLookup(transport: FakeTransport(.fail(URLError(.cancelled))))
+        await #expect(throws: CancellationError.self) {
+            _ = try await lookup.card(for: "word")
+        }
     }
 
     // BEH-05: a payload whose definitions are empty or blank raises

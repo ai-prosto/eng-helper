@@ -21,8 +21,11 @@ public struct FreeDictionaryClient: DictionaryTransport {
     /// The exact request `fetch` sends; exposed so tests can inspect
     /// it without touching the network.
     public func request(for word: String) -> URLRequest {
+        // Beyond `/`: a `:` in the first segment of a relative reference
+        // reads as a scheme and discards the base URL, and literal `.`/`..`
+        // segments resolve against the base path.
         var allowed = CharacterSet.urlPathAllowed
-        allowed.remove("/")
+        allowed.remove(charactersIn: "/:.")
         let encoded = word.addingPercentEncoding(withAllowedCharacters: allowed) ?? word
         let url = URL(string: encoded, relativeTo: Self.endpoint) ?? Self.endpoint
         var request = URLRequest(url: url.absoluteURL)

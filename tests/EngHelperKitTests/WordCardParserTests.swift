@@ -25,6 +25,19 @@ import Testing
         ])
     }
 
+    // The payload's own word wins over the fallback; the fallback is
+    // used only when the payload carries no non-empty word.
+    @Test func testFallbackWordOnlyFillsAMissingPayloadWord() throws {
+        let fromPayload = try WordCardParser.card(from: fixture("grouped"), fallbackWord: "Bank!!")
+        #expect(fromPayload.word == "bank")
+
+        let wordless = Data(
+            #"[{"meanings":[{"partOfSpeech":"noun","definitions":[{"definition":"A thing."}]}]}]"#
+                .utf8)
+        let fromFallback = try WordCardParser.card(from: wordless, fallbackWord: "serendipity")
+        #expect(fromFallback.word == "serendipity")
+    }
+
     // BEH-02: definitions with an example expose its text; definitions
     // with no example or a blank one expose no example at all.
     @Test func testExamplePresentOnlyWhenPayloadHasOne() throws {

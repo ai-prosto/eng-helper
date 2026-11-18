@@ -2,6 +2,38 @@ import Foundation
 import Testing
 @testable import EngHelperKit
 
+/// Transport that suspends inside `fetch` until released, so a test
+/// can act while a lookup is deterministically in flight.
+final class GatedTransport: DictionaryTransport, @unchecked Sendable {
+    private let data: Data
+    private let started: AsyncStream<Void>
+    private let startedIn: AsyncStream<Void>.Continuation
+    private let gate: AsyncStream<Void>
+    private let gateIn: AsyncStream<Void>.Continuation
+
+    init(respond data: Data) {
+        self.data = data
+        (started, startedIn) = AsyncStream.makeStream()
+        (gate, gateIn) = AsyncStream.makeStream()
+    }
+
+    func fetch(word: String) async throws -> TransportResponse {
+        startedIn.yield(())
+        for await _ in gate { break }
+        return TransportResponse(data: data, statusCode: 200)
+    }
+
+    /// Suspends until `fetch` has been entered.
+    func started() async {
+        for await _ in started { break }
+    }
+
+    /// Lets the suspended `fetch` return.
+    func release() {
+        gateIn.yield(())
+    }
+}
+
 @MainActor
 @Suite final class PopoverModelTests {
 
@@ -103,6 +135,37 @@ import Testing
 
         #expect(model.phase == .card(older))
         #expect(transport.fetchedWords.isEmpty)
+    }
+
+    // BEH-19: a card opened from the saved list is not overwritten by
+    // a lookup that was still in flight when the row was tapped.
+    @Test func testStaleLookupDoesNotOverwriteShownSavedCard() async throws {
+        let saved = WordCard(word: "apple", ipa: nil, gloss: "A fruit.", meanings: [])
+        try store.save(saved)
+
+        let transport = GatedTransport(respond: try fixture("grouped"))
+        let model = PopoverModel(lookup: WordLookup(transport: transport), store: store)
+
+        let lookup = Task { await model.lookUp("bank") }
+        await transport.started()
+        #expect(model.phase == .loading)
+
+        model.show(try #require(model.entries.first))
+        transport.release()
+        await lookup.value
+
+        // The lookup's save still landed; only the phase is protected.
+        #expect(model.phase == .card(saved))
+        #expect(model.entries.map(\.word) == ["bank", "apple"])
+    }
+
+    // Design D-18: the remaining failure lines — bad payload and the
+    // catch-all — are one short line each.
+    @Test func testBadResponseAndUnknownFailureMessages() {
+        #expect(PopoverModel.message(for: LookupError.badResponse, word: "x")
+            == "Unexpected dictionary reply — try again")
+        #expect(PopoverModel.message(for: URLError(.badURL), word: "x")
+            == "Could not save “x”")
     }
 
     // Design D-14: the real store folder resolves inside the user's

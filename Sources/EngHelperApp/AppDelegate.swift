@@ -12,6 +12,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let model = PopoverModel(lookup: WordLookup(), store: store)
             statusItemController = StatusItemController(model: model)
         } catch {
+            // An .accessory app is never active at launch; without
+            // this the alert can open behind other apps.
+            NSApp.activate()
             NSApp.presentError(error)
             NSApp.terminate(nil)
         }

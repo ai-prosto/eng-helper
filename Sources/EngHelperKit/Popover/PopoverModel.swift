@@ -24,6 +24,9 @@ public final class PopoverModel: ObservableObject {
 
     private let service: VocabularyService
     private let store: VocabularyStore
+    // Only the newest lookup may write `phase`; a tap on a saved row
+    // also invalidates anything still in flight.
+    private var lookupGeneration = 0
 
     public init(lookup: WordLookup, store: VocabularyStore) {
         self.service = VocabularyService(lookup: lookup, store: store)
@@ -41,14 +44,20 @@ public final class PopoverModel: ObservableObject {
         let word = word.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !word.isEmpty else { return }
 
+        lookupGeneration += 1
+        let generation = lookupGeneration
+
         phase = .loading
         do {
             let card = try await service.addWord(word)
-            phase = .card(card)
             refreshEntries()
+            guard generation == lookupGeneration else { return }
+            phase = .card(card)
         } catch is CancellationError {
+            guard generation == lookupGeneration else { return }
             phase = .idle
         } catch {
+            guard generation == lookupGeneration else { return }
             phase = .error(Self.message(for: error, word: word))
         }
     }
@@ -56,6 +65,7 @@ public final class PopoverModel: ObservableObject {
     /// A tap on a saved row: reopen the stored card — no lookup, no
     /// save, no network (BEH-19).
     public func show(_ entry: VocabularyEntry) {
+        lookupGeneration += 1
         phase = .card(entry.card)
     }
 

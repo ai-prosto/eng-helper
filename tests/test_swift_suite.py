@@ -49,6 +49,8 @@ REQUIRED_TESTS = [
     "testOfflineFailureShowsOneLineAndWritesNothing",
     "testNotFoundFailureShowsOneLineAndWritesNothing",
     "testListIsNewestFirstAndReopensCardWithoutTransport",
+    "testStaleLookupDoesNotOverwriteShownSavedCard",
+    "testBadResponseAndUnknownFailureMessages",
     "testStoragePathsResolveApplicationSupportEngHelper",
 ]
 

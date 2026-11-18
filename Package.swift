@@ -12,6 +12,9 @@ let package = Package(
         .testTarget(
             name: "EngHelperKitTests",
             dependencies: ["EngHelperKit"],
+            // Lowercase `tests/` so the same directory also hosts the
+            // pytest bridge that CI invokes as `pytest tests`.
+            path: "tests/EngHelperKitTests",
             resources: [.copy("Fixtures")]
         ),
     ]

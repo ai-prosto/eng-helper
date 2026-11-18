@@ -1,5 +1,7 @@
 .build/
 .swiftpm/
+.pytest_cache/
+__pycache__/
 DerivedData/
 *.xcodeproj
 .DS_Store
